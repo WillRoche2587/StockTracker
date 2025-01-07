@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <title>Will Roche's Stock Tracker</title>
+</head>
+<body>
+    <div class="main-container">
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="settings-tab">
+                    <button id="settingsToggle" class="settings-button">⚙️ Settings</button>
+                    <div id="settingsPanel" class="settings-panel hidden">
+                        <div class="theme-toggle">
+                            <span>Theme:</span>
+                            <select id="themeSelect" class="theme-select">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="market-status" class="market-status">
+                    Checking market status...
+                </div>
+                
+                <div class="time-range-selector">
+                    <button class="time-button active" data-range="1D">1D</button>
+                    <button class="time-button" data-range="1W">1W</button>
+                    <button class="time-button" data-range="1M">1M</button>
+                </div>
+                
+                <h3>Recent Searches</h3>
+                <div id="recent-searches" class="recent-searches"></div>
+            </aside>
+            
+            <main class="content">
+                <h1>Will Roche's Stock Tracker</h1>
+                <div class="search-container">
+                    <input id="ticker" type="text" placeholder="Enter stock ticker (e.g., AAPL)">
+                    <button onclick="connectWebSocket()">Track Stock</button>
+                </div>
+                <div id="stock-data"></div>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </main>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let priceChart;
+        let currentTimeframe = '1D';
+
+        
+        const themeSelect = document.getElementById('themeSelect');
+        const settingsToggle = document.getElementById('settingsToggle');
+        const settingsPanel = document.getElementById('settingsPanel');
+        
+        
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeSelect.value = savedTheme;
+
+        
+        themeSelect.addEventListener('change', (e) => {
+            const newTheme = e.target.value;
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            
+            if (priceChart) {
+                updateChartTheme(priceChart);
+            }
+        });
+
+        
+        settingsToggle.addEventListener('click', () => {
+            settingsPanel.classList.toggle('hidden');
+        });
+
+        
+        document.addEventListener('click', (e) => {
+            if (!settingsPanel.contains(e.target) && !settingsToggle.contains(e.target)) {
+                settingsPanel.classList.add('hidden');
+            }
+        });
+
+        
+        function updateChartTheme(chart) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#E5E7EB' : '#1E293B';
+            
+            chart.options.scales.x.ticks.color = textColor;
+            chart.options.scales.y.ticks.color = textColor;
+            chart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            chart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            chart.update();
+        }
+
+        function updateMarketStatus(isOpen) {
+            const statusDiv = document.getElementById('market-status');
+            if (isOpen) {
+                statusDiv.className = 'market-status market-open';
+                statusDiv.textContent = 'Market Open';
+            } else {
+                statusDiv.className = 'market-status market-closed';
+                statusDiv.textContent = 'Market Closed';
+            }
+        }
+
+        function updateRecentSearches(searches) {
+            const container = document.getElementById('recent-searches');
+            container.innerHTML = searches.reverse().map(search => `
+                <div class="recent-search-item" onclick="searchStock('${search.symbol}')">
+                    <div>
+                        <div>${search.symbol}</div>
+                        <div class="recent-search-name">${search.name}</div>
+                    </div>
+                    <div class="recent-search-price ${search.change >= 0 ? 'positive' : 'negative'}">
+                        $${search.price.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchStock(ticker) {
+            document.getElementById('ticker').value = ticker;
+            connectWebSocket();
+        }
+
+        document.querySelectorAll('.time-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentTimeframe = button.dataset.range;
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        symbol: document.getElementById('ticker').value,
+                        timeframe: currentTimeframe
+                    }));
+                }
+            });
+        });
+
+        function createChart(historicalData) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            if (priceChart) {
+                priceChart.destroy();
+            }
+
+            const timestamps = historicalData.map(data => {
+                const date = new Date(data.timestamp);
+                if (currentTimeframe === '1D') {
+                    return date.toLocaleTimeString();
+                } else if (currentTimeframe === '1Y') {
+                    return date.toLocaleDateString();
+                } else {
+                    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                }
+            });
+            const prices = historicalData.map(data => data.price);
+            
+            const startPrice = prices[0];
+            const endPrice = prices[prices.length - 1];
+            const isPositive = endPrice >= startPrice;
+            
+            const lineColor = isPositive ? '#16a34a' : '#dc2626';
+            const fillColor = isPositive ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)';
+
+            
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#E5E7EB' : '#1E293B';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{
+                        label: 'Stock Price',
+                        data: prices,
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: lineColor,
+                        pointHoverBorderColor: lineColor
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value, index, ticks) {
+                                    if (index === 0) {
+                                        return 'Hover to view timestamps';
+                                    } 
+                                    return '';
+                                },
+                                autoSkip: false,
+                                minRotation: 0,
+                                maxRotation: 0,
+                                font: {
+                                    family: 'Segoe UI',
+                                    size: 12,
+                                    weight: 'normal',
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function connectWebSocket() {
+            const ticker = document.getElementById("ticker").value;
+            if (!ticker) {
+                alert("Please enter a stock ticker.");
+                return;
+            }
+
+            if (socket) {
+                socket.close();
+            }
+
+            socket = new WebSocket("ws://localhost:8000/ws");
+
+            socket.onopen = () => {
+                socket.send(JSON.stringify({
+                    symbol: ticker,
+                    timeframe: currentTimeframe
+                }));
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const percentChange = parseFloat(data.percentChange);
+                const changeClass = percentChange >= 0 ? 'positive' : 'negative';
+                const changeSymbol = percentChange >= 0 ? '+' : '';
+
+                updateMarketStatus(data.marketOpen);
+                updateRecentSearches(data.recentSearches);
+
+                document.getElementById("stock-data").innerHTML = `
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <h2 class="stock-title">${data.name} (${data.symbol})</h2>
+                            <div class="stock-price-container">
+                                <span class="stock-price">${data.price} ${data.currency}</span>
+                                <span class="stock-change ${changeClass}">${changeSymbol}${data.percentChange}%</span>
+                            </div>
+                        </div>
+                        <div class="stock-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Sector</div>
+                                <div class="detail-value">${data.sector}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Industry</div>
+                                <div class="detail-value">${data.industry}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Country</div>
+                                <div class="detail-value">${data.country}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                if (data.historicalData && data.historicalData.length > 0) {
+                    createChart(data.historicalData);
+                }
+            };
+
+            socket.onclose = () => console.log("WebSocket connection closed.");
+        }
+    </script>
+</body>
+</html>
