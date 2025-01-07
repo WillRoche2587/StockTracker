@@ -87,7 +87,7 @@ def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     """Serve the index.html file."""
-    with open("app/static/index.html") as f:
+    with open("static/index.html") as f:
         return HTMLResponse(content=f.read())
 
 @app.websocket("/ws")
