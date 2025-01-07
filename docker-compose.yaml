@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+    container_name: stock-tracker-backend
+
+  frontend:
+    build:
+      context: ./stock-tracker
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./stock-tracker:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+    container_name: stock-tracker-frontend
+    depends_on:
+      - backend
