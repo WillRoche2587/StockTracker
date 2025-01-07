@@ -11,7 +11,7 @@ from typing import Dict, List
 app = FastAPI()
 
 # Mount static files directory
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Type-annotated storage for recent searches
 recent_searches: Dict[str, dict] = {}

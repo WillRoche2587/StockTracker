@@ -1,4 +1,3 @@
-# Use Python base image
 FROM python:3.10-slim
 
 # Set working directory
@@ -8,7 +7,7 @@ WORKDIR /app
 COPY app /app
 
 # Install dependencies
-RUN pip install fastapi uvicorn yfinance websockets
+RUN pip install fastapi uvicorn yfinance websockets aiofiles
 
 # Expose port
 EXPOSE 8000
