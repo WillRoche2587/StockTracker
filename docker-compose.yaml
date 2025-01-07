@@ -8,8 +8,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app/app
+      - ./app:/app  # Mount the app folder directly into the container
     container_name: stock-tracker-backend
+
 
   frontend:
     build:
