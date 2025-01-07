@@ -271,7 +271,7 @@
                 socket.close();
             }
 
-            socket = new WebSocket("ws://localhost:8000/ws");
+            socket = new WebSocket('wss://stocktracker-z7er.onrender.com/ws')
 
             socket.onopen = () => {
                 socket.send(JSON.stringify({
