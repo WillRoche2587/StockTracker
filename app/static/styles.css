@@ -97,9 +97,9 @@ input {
 }
 /* Layout */
 .container {
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 20px;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 20px;
 }
 /* Typography */
 h1 {
@@ -269,17 +269,7 @@ input {
     box-shadow:var(--shadow-md);
     margin-top:0rem;
 }
-.container {
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 20px;
-}
-@media (max-width:768px) {
-    .chart-container {
-    height:300px;
-    padding:1rem;
-}
-}.layout {
+.layout {
     display: grid;
     grid-template-columns: 200px 1fr;
     gap: 2rem;
@@ -513,7 +503,7 @@ input {
 /* Stock info container - holds chart and cards */
 .stock-info-container {
     display: grid;
-    grid-template-columns: 4fr 1fr; /* Adjusted ratio to give more space to main content */
+    grid-template-columns: 4fr 1fr;
     gap: 1.5rem;
     margin-top: 1.5rem;
     width: 100%;
