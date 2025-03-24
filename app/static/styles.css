@@ -98,7 +98,7 @@ input {
 /* Layout */
 .layout {
     display: grid;
-    grid-template-columns: 250px 1fr 200px;
+    grid-template-columns: 250px 800px 200px;
     gap: 2rem;
     max-width: 100%;
     padding: 20px;
@@ -136,13 +136,14 @@ input {
 .stock-card {
     width: 100%;
     margin: 0;
-    max-width: none;
+    max-width: 800px;
 }
 /* Chart container adjustments */
 .chart-container {
     height: 400px;
     width: 100%;
     margin-top: 1rem;
+    max-width: 800px;
 }
 /* Time range selector adjustments */
 .time-range-selector {
@@ -161,17 +162,22 @@ input {
 /* Responsive adjustments */
 @media (max-width: 1400px) {
     .layout {
-        grid-template-columns: 250px 1fr 180px;
+        grid-template-columns: 250px 700px 180px;
     }
 }
 @media (max-width: 1200px) {
     .layout {
-        grid-template-columns: 250px 1fr 160px;
+        grid-template-columns: 250px 600px 160px;
     }
 }
 @media (max-width: 1024px) {
     .layout {
         grid-template-columns: 1fr;
+    }
+    
+    .stock-card,
+    .chart-container {
+        max-width: 100%;
     }
     
     .info-cards-container {
@@ -193,16 +199,6 @@ input {
     
     .info-cards-container {
         grid-template-columns: 1fr;
-    }
-    
-    .time-range-selector {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    
-    .time-button {
-        flex: 1 1 calc(33.333% - 0.5rem);
-        min-width: 80px;
     }
 }
 /* Typography */
@@ -481,7 +477,7 @@ input {
 }
 
 .info-card h3 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
     padding-bottom: 0.25rem;
 }
@@ -509,7 +505,7 @@ input {
 }
 
 .info-card .detail-value {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* Dark theme adjustments */
