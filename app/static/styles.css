@@ -383,20 +383,20 @@ input {
 }
 }/* Base styles for the main container */
 .main-container {
-    max-width:1200px;
-    margin-top:0;
-    margin:0 auto;
-    background:var(--background-color);
-    border-radius:0px;
-    /* Removed padding */
+    max-width: 100%;
+    margin: 0;
+    background: var(--background-color);
+    border-radius: 0;
+    padding: 0;
 }
 /* Adjust layout for the single container */
 .layout {
-    display:grid;
-    grid-template-columns:1fr 3fr;
-    /* Adjust sidebar to take up less space */
-    gap:2rem;
-    align-items:flex-start;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 100%;
+    padding: 20px;
 }
 .content {
     display:flex;
@@ -513,16 +513,17 @@ input {
 /* Stock info container - holds chart and cards */
 .stock-info-container {
     display: grid;
-    grid-template-columns: 3fr 1fr; /* Wider ratio for main content */
+    grid-template-columns: 4fr 1fr; /* Adjusted ratio to give more space to main content */
     gap: 1.5rem;
     margin-top: 1.5rem;
+    width: 100%;
 }
 
 /* Cards container on the right side */
 .info-cards-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem; /* Reduced gap between cards */
 }
 
 /* Individual info cards */
@@ -530,11 +531,11 @@ input {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 1.25rem;
+    padding: 1rem; /* Reduced padding */
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Reduced margin */
 }
 
 .info-card h3 {
@@ -555,8 +556,8 @@ input {
 
 /* Detail items inside info cards */
 .info-card .detail-item {
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
+    padding: 0.5rem; /* Reduced padding */
+    margin-bottom: 0.25rem; /* Reduced margin */
     border-radius: 6px;
     background-color: rgba(0, 0, 0, 0.02);
     transition: all 0.2s ease;
@@ -567,14 +568,14 @@ input {
 }
 
 .info-card .detail-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem; /* Slightly smaller font */
     color: var(--text-color);
     opacity: 0.7;
     margin-bottom: 0.25rem;
 }
 
 .info-card .detail-value {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Slightly smaller font */
     font-weight: 600;
     color: var(--text-color);
 }
@@ -655,7 +656,7 @@ input {
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .stock-info-container {
-        grid-template-columns: 2fr 1fr;
+        grid-template-columns: 3fr 1fr;
     }
     
     .company-info-bar {
@@ -684,6 +685,7 @@ input {
 @media (max-width: 768px) {
     .layout {
         grid-template-columns: 1fr;
+        padding: 10px;
     }
     
     .stock-card .chart-container,
