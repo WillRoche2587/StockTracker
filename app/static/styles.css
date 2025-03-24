@@ -139,6 +139,7 @@ input {
     box-shadow: var(--shadow-sm);
     width: 100%;
     margin-bottom: 0;
+    flex: 1;
 }
 
 /* Stock card adjustments */
@@ -172,16 +173,18 @@ input {
 /* Time range selector adjustments */
 .time-range-selector {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
     padding: 0.75rem;
     margin-bottom: 1rem;
+    justify-content: center;
 }
 .time-button {
-    width: 100%;
+    flex: 1;
     padding: 0.5rem;
     font-size: 0.9rem;
-    text-align: left;
+    text-align: center;
+    min-width: 60px;
 }
 
 /* Sidebar styles */
@@ -246,6 +249,17 @@ input {
     
     .info-cards-container {
         grid-template-columns: 1fr;
+    }
+    
+    .time-range-selector {
+        padding: 0.5rem;
+        gap: 0.25rem;
+    }
+    
+    .time-button {
+        padding: 0.35rem;
+        font-size: 0.8rem;
+        min-width: 50px;
     }
 }
 
@@ -475,20 +489,32 @@ input {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
     padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-card .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
 }
 
 .info-card .detail-item {
     padding: 0.35rem;
     margin-bottom: 0.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .info-card .detail-label {
     font-size: 0.75rem;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0;
+    opacity: 0.7;
 }
 
 .info-card .detail-value {
     font-size: 0.85rem;
+    font-weight: 500;
 }
 
 /* Dark theme adjustments */
