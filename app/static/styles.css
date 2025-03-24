@@ -95,34 +95,39 @@ input {
     color:var(--text-color);
     border-color:var(--border-color);
 }
-/* Layout */
+
+/* UPDATED: Layout - three column layout */
 .layout {
     display: grid;
-    grid-template-columns: 250px 200px 1fr;
-    gap: 2rem;
+    grid-template-columns: 250px 1fr 250px;
+    gap: 1.5rem;
     max-width: 100%;
     padding: 20px;
     align-items: start;
 }
+
 /* Main content area */
 .content {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-/* Stock info container - now only contains the main card */
+
+/* Stock info container */
 .stock-info-container {
     width: 100%;
 }
-/* Info cards container - now between sidebar and chart */
+
+/* UPDATED: Info cards container - positioned on the right */
 .info-cards-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     position: sticky;
     top: 20px;
-    width: 200px;
+    width: 100%;
 }
+
 /* Individual info cards */
 .info-card {
     background-color: var(--card-background);
@@ -132,18 +137,21 @@ input {
     box-shadow: var(--shadow-sm);
     width: 100%;
 }
+
 /* Stock card adjustments */
 .stock-card {
     width: 100%;
     margin: 0;
     max-width: none;
 }
+
 /* Chart container adjustments */
 .chart-container {
     height: 400px;
     width: 100%;
     margin-top: 1rem;
 }
+
 /* Time range selector adjustments */
 .time-range-selector {
     display: flex;
@@ -158,17 +166,22 @@ input {
     font-size: 0.9rem;
     text-align: left;
 }
-/* Responsive adjustments */
+
+/* UPDATED: Responsive adjustments */
 @media (max-width: 1400px) {
     .layout {
-        grid-template-columns: 250px 180px 1fr;
+        grid-template-columns: 220px 1fr 220px;
+        gap: 1rem;
     }
 }
+
 @media (max-width: 1200px) {
     .layout {
-        grid-template-columns: 250px 160px 1fr;
+        grid-template-columns: 200px 1fr 200px;
+        gap: 1rem;
     }
 }
+
 @media (max-width: 1024px) {
     .layout {
         grid-template-columns: 1fr;
@@ -180,8 +193,14 @@ input {
         gap: 1rem;
         position: static;
         width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .info-card {
+        margin-bottom: 0;
     }
 }
+
 @media (max-width: 768px) {
     .layout {
         padding: 10px;
@@ -195,6 +214,7 @@ input {
         grid-template-columns: 1fr;
     }
 }
+
 /* Typography */
 h1 {
     font-size:2.5rem;
@@ -383,16 +403,7 @@ input {
     color:var(--danger-color);
     /* Red text */
 }
-/* Responsive adjustments */
-@media (max-width:768px) {
-    .layout {
-    grid-template-columns:1fr;
-    /* Stack sidebar and content vertically */
-}
-.chart-container {
-    height:300px;
-}
-}
+
 /* New detailed stock info styles */
 .details-section {
     margin-bottom: 1.5rem;
@@ -512,91 +523,12 @@ input {
     font-weight: 500;
 }
 
-/* Chart container within main card */
-.chart-container {
-    height: 400px;
-    margin-top: 1rem;
-    width: 100%;
-    background-color: var(--card-background);
-    border-radius: 8px;
-}
-
 /* Make sure the chart container size is properly overridden */
 .stock-card .chart-container {
     height: 400px;
     box-shadow: none;
     padding: 0;
     margin-bottom: 0;
-}
-
-/* Right sidebar info cards */
-.info-cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-    .stock-info-container {
-        grid-template-columns: 3fr 1fr;
-    }
-    
-    .company-info-bar {
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-}
-
-@media (max-width: 1024px) {
-    .stock-info-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .info-cards-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .info-card {
-        margin-bottom: 0;
-    }
-}
-
-/* Responsive styles for mobile */
-@media (max-width: 768px) {
-    .layout {
-        grid-template-columns: 1fr;
-        padding: 10px;
-    }
-    
-    .stock-card .chart-container,
-    .chart-container {
-        height: 300px;
-    }
-    
-    .stock-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .stock-price-container {
-        margin-top: 0.5rem;
-    }
-    
-    .stock-info-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .info-cards-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .company-info-bar {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
 }
 
 /* Fix display of details section */
@@ -611,14 +543,7 @@ input {
     transition: all 0.2s ease;
 }
 
-/* Content layout adjustments */
-.content {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-/* Sidebar styles */
+/* UPDATED: Sidebar styles */
 .sidebar {
     background: var(--card-background);
     border-radius: 12px;
@@ -631,6 +556,8 @@ input {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: sticky;
+    top: 20px;
 }
 
 /* Time button styles */
