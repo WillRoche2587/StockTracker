@@ -395,7 +395,7 @@
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Dividend Yield</div>
-                                    <div class="detail-value">${data.dividend_yield !== "N/A" ? (data.dividend_yield / 100).toFixed(2) + '%' : "N/A"}</div>
+                                    <div class="detail-value">${data.dividend_yield !== "N/A" ? (parseFloat(data.dividend_yield) / 100).toFixed(2) + '%' : "N/A"}</div>
                                 </div>
                             </div>
                         </div>
