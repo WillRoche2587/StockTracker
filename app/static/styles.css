@@ -98,7 +98,7 @@ input {
 /* Layout */
 .layout {
     display: grid;
-    grid-template-columns: 250px 800px 200px;
+    grid-template-columns: 250px 1fr 200px;
     gap: 2rem;
     max-width: 100%;
     padding: 20px;
@@ -112,6 +112,10 @@ input {
 }
 /* Stock info container - now only contains the main card */
 .stock-info-container {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
     width: 100%;
 }
 /* Right sidebar for info cards */
@@ -136,14 +140,13 @@ input {
 .stock-card {
     width: 100%;
     margin: 0;
-    max-width: 800px;
+    max-width: none;
 }
 /* Chart container adjustments */
 .chart-container {
     height: 400px;
     width: 100%;
     margin-top: 1rem;
-    max-width: 800px;
 }
 /* Time range selector adjustments */
 .time-range-selector {
@@ -162,12 +165,12 @@ input {
 /* Responsive adjustments */
 @media (max-width: 1400px) {
     .layout {
-        grid-template-columns: 250px 700px 180px;
+        grid-template-columns: 250px 1fr 180px;
     }
 }
 @media (max-width: 1200px) {
     .layout {
-        grid-template-columns: 250px 600px 160px;
+        grid-template-columns: 250px 1fr 160px;
     }
 }
 @media (max-width: 1024px) {
@@ -175,9 +178,8 @@ input {
         grid-template-columns: 1fr;
     }
     
-    .stock-card,
-    .chart-container {
-        max-width: 100%;
+    .stock-info-container {
+        grid-template-columns: 1fr;
     }
     
     .info-cards-container {
@@ -448,55 +450,16 @@ input {
     font-weight: 600;
 }
 
-/* Stock info container - holds chart and cards */
-.stock-info-container {
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    width: 100%;
-}
-
-/* Cards container on the right side */
-.info-cards-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem; /* Reduced gap between cards */
-}
-
-/* Individual info cards */
-.info-card {
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1rem; /* Reduced padding */
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem; /* Reduced margin */
-}
-
+/* Info card content adjustments */
 .info-card h3 {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
     padding-bottom: 0.25rem;
 }
 
-/* Grid for items within cards */
-.detail-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-}
-
-/* Detail items inside info cards */
 .info-card .detail-item {
     padding: 0.35rem;
     margin-bottom: 0.15rem;
-}
-
-.info-card .detail-item:hover {
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .info-card .detail-label {
