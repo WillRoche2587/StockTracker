@@ -46,9 +46,6 @@
                 </div>
                 <div id="stock-data"></div>
                 <div class="stock-info-container">
-                    <div class="chart-container">
-                        <canvas id="priceChart"></canvas>
-                    </div>
                     <div id="stock-info-container" class="info-cards-container">
                         <!-- Stock info cards will be inserted here by JavaScript -->
                     </div>
@@ -363,22 +360,13 @@
                                 <span class="stock-change ${changeClass}">${changeSymbol}${data.percentChange}%</span>
                             </div>
                         </div>
-                        <div class="stock-details">
-                            <div class="details-section">
-                                <h3>Company Information</h3>
-                                <div class="detail-item">
-                                    <div class="detail-label">Sector</div>
-                                    <div class="detail-value">${data.sector}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">Industry</div>
-                                    <div class="detail-value">${data.industry}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">Country</div>
-                                    <div class="detail-value">${data.country}</div>
-                                </div>
-                            </div>
+                        <div class="company-info-bar">
+                            <div class="info-item"><span class="info-label">Sector:</span> <span class="info-value">${data.sector}</span></div>
+                            <div class="info-item"><span class="info-label">Industry:</span> <span class="info-value">${data.industry}</span></div>
+                            <div class="info-item"><span class="info-label">Country:</span> <span class="info-value">${data.country}</span></div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="priceChart"></canvas>
                         </div>
                     </div>
                 `;
