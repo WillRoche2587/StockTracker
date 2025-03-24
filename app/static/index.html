@@ -45,11 +45,15 @@
                     <button onclick="connectWebSocket()">Track Stock</button>
                 </div>
                 <div id="stock-data"></div>
-                <div class="chart-container">
-                    <canvas id="priceChart"></canvas>
+                <div class="stock-info-container">
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                    <div id="stock-info-container" class="info-cards-container">
+                        <!-- Stock info cards will be inserted here by JavaScript -->
+                    </div>
                 </div>
             </main>
-        </div>
         </div>
     </div>
 
@@ -375,69 +379,71 @@
                                     <div class="detail-value">${data.country}</div>
                                 </div>
                             </div>
-                            
-                            <div class="details-section">
-                                <h3>Key Metrics</h3>
-                                <div class="detail-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-label">Market Cap</div>
-                                        <div class="detail-value">${formatLargeNumber(data.marketCap)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">P/E Ratio</div>
-                                        <div class="detail-value">${formatNumber(data.pe_ratio)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">EPS</div>
-                                        <div class="detail-value">${formatNumber(data.eps)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Beta</div>
-                                        <div class="detail-value">${formatNumber(data.beta)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Dividend Yield</div>
-                                        <div class="detail-value">${data.dividend_yield !== "N/A" ? (data.dividend_yield * 100).toFixed(2) + '%' : "N/A"}</div>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById("stock-info-container").innerHTML = `
+                    <div class="info-card">
+                        <h3>Key Metrics</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Market Cap</div>
+                                <div class="detail-value">${formatLargeNumber(data.marketCap)}</div>
                             </div>
-                            
-                            <div class="details-section">
-                                <h3>Trading Information</h3>
-                                <div class="detail-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-label">Previous Close</div>
-                                        <div class="detail-value">${formatNumber(data.previousClose)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Open</div>
-                                        <div class="detail-value">${formatNumber(data.open)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Day High</div>
-                                        <div class="detail-value">${formatNumber(data.dayHigh)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Day Low</div>
-                                        <div class="detail-value">${formatNumber(data.dayLow)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">52-Week High</div>
-                                        <div class="detail-value">${formatNumber(data.fiftyTwoWeekHigh)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">52-Week Low</div>
-                                        <div class="detail-value">${formatNumber(data.fiftyTwoWeekLow)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Volume</div>
-                                        <div class="detail-value">${formatLargeNumber(data.volume)}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">Avg Volume</div>
-                                        <div class="detail-value">${formatLargeNumber(data.averageVolume)}</div>
-                                    </div>
-                                </div>
+                            <div class="detail-item">
+                                <div class="detail-label">P/E Ratio</div>
+                                <div class="detail-value">${formatNumber(data.pe_ratio)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">EPS</div>
+                                <div class="detail-value">${formatNumber(data.eps)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Beta</div>
+                                <div class="detail-value">${formatNumber(data.beta)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Dividend Yield</div>
+                                <div class="detail-value">${data.dividend_yield !== "N/A" ? (data.dividend_yield * 100).toFixed(2) + '%' : "N/A"}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Trading Information</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Previous Close</div>
+                                <div class="detail-value">${formatNumber(data.previousClose)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Open</div>
+                                <div class="detail-value">${formatNumber(data.open)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Day High</div>
+                                <div class="detail-value">${formatNumber(data.dayHigh)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Day Low</div>
+                                <div class="detail-value">${formatNumber(data.dayLow)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">52-Week High</div>
+                                <div class="detail-value">${formatNumber(data.fiftyTwoWeekHigh)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">52-Week Low</div>
+                                <div class="detail-value">${formatNumber(data.fiftyTwoWeekLow)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Volume</div>
+                                <div class="detail-value">${formatLargeNumber(data.volume)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Avg Volume</div>
+                                <div class="detail-value">${formatLargeNumber(data.averageVolume)}</div>
                             </div>
                         </div>
                     </div>

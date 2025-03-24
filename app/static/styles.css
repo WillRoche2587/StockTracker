@@ -505,3 +505,204 @@ input {
     font-size: 1rem;
     font-weight: 600;
 }
+
+/* Stock info container - holds chart and cards */
+.stock-info-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Cards container on the right side */
+.info-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Individual info cards */
+.info-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.info-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Grid for items within cards */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+/* Detail items inside info cards */
+.info-card .detail-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.info-card .detail-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.info-card .detail-label {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+}
+
+.info-card .detail-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Dark theme adjustments */
+:root[data-theme="dark"] .info-card .detail-item {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="dark"] .info-card .detail-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Stock Card Adjustments for Company Information */
+.stock-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stock-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.stock-price-container {
+    display: flex;
+    align-items: center;
+}
+
+.stock-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.stock-change {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    margin-left: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .stock-info-container {
+        grid-template-columns: 3fr 2fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .stock-info-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .info-card {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .stock-info-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .stock-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .stock-price-container {
+        margin-top: 0.5rem;
+    }
+}
+
+/* Chart container sizing */
+.chart-container {
+    height: 400px;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+/* Fix display of details section */
+.details-section .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+/* Content layout adjustments */
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
