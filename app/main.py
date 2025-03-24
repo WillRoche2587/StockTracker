@@ -74,6 +74,28 @@ def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
     delta, interval = timeframe_settings.get(timeframe, timeframe_settings["1D"])
     start_date = end_date - delta
     
+    # Adjust for market closed scenario in 1D view
+    if timeframe == "1D" and not is_market_open():
+        # If market is closed, get most recent trading day's data
+        now = datetime.now()
+        # If it's weekend or outside trading hours
+        if now.weekday() >= 5:  # Weekend
+            days_to_subtract = now.weekday() - 4  # Go back to Friday
+            end_date = (now - timedelta(days=days_to_subtract)).replace(hour=16, minute=0, second=0)
+            start_date = end_date - timedelta(days=1)
+        else:  # Weekday but market closed
+            if now.hour < 9 or (now.hour == 9 and now.minute < 30):
+                # Before market opens, show previous day
+                if now.weekday() == 0:  # Monday
+                    start_date = (now - timedelta(days=3)).replace(hour=9, minute=30, second=0)  # Friday
+                    end_date = (now - timedelta(days=3)).replace(hour=16, minute=0, second=0)
+                else:
+                    start_date = (now - timedelta(days=1)).replace(hour=9, minute=30, second=0)
+                    end_date = (now - timedelta(days=1)).replace(hour=16, minute=0, second=0)
+            else:  # After market closes
+                start_date = now.replace(hour=9, minute=30, second=0)
+                end_date = now.replace(hour=16, minute=0, second=0)
+    
     hist_data = stock.history(start=start_date, end=end_date, interval=interval)
     
     return [
@@ -138,7 +160,21 @@ async def websocket_endpoint(websocket: WebSocket):
                 "country": stock_info.get("country", "N/A"),
                 "historicalData": historical_prices,
                 "marketOpen": is_market_open(),
-                "recentSearches": list(recent_searches.values())[-7:]
+                "recentSearches": list(recent_searches.values())[-7:],
+                # Additional stock info
+                "marketCap": stock_info.get("marketCap", "N/A"),
+                "volume": stock_info.get("volume", "N/A"),
+                "averageVolume": stock_info.get("averageVolume", "N/A"),
+                "pe_ratio": stock_info.get("trailingPE", "N/A"),
+                "eps": stock_info.get("trailingEps", "N/A"),
+                "dividend_yield": stock_info.get("dividendYield", "N/A"),
+                "beta": stock_info.get("beta", "N/A"),
+                "fiftyTwoWeekHigh": stock_info.get("fiftyTwoWeekHigh", "N/A"),
+                "fiftyTwoWeekLow": stock_info.get("fiftyTwoWeekLow", "N/A"),
+                "previousClose": stock_info.get("previousClose", "N/A"),
+                "open": stock_info.get("open", "N/A"),
+                "dayHigh": stock_info.get("dayHigh", "N/A"),
+                "dayLow": stock_info.get("dayLow", "N/A")
             }
             
             await websocket.send_json(response_data)

@@ -135,6 +135,35 @@
             connectWebSocket();
         }
 
+        // Helper functions for formatting numbers
+        function formatNumber(value) {
+            if (value === "N/A" || value === null || value === undefined) {
+                return "N/A";
+            }
+            return Number(value).toFixed(2);
+        }
+
+        function formatLargeNumber(value) {
+            if (value === "N/A" || value === null || value === undefined) {
+                return "N/A";
+            }
+            
+            const num = Number(value);
+            if (isNaN(num)) return "N/A";
+            
+            if (num >= 1e12) {
+                return (num / 1e12).toFixed(2) + " T";
+            } else if (num >= 1e9) {
+                return (num / 1e9).toFixed(2) + " B";
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(2) + " M";
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(2) + " K";
+            } else {
+                return num.toFixed(0);
+            }
+        }
+
         document.querySelectorAll('.time-button').forEach(button => {
             button.addEventListener('click', () => {
                 document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
@@ -155,6 +184,23 @@
             
             if (priceChart) {
                 priceChart.destroy();
+            }
+
+            if (!historicalData || historicalData.length === 0) {
+                // No data available
+                return;
+            }
+
+            // Check if we're showing historical data (market closed)
+            const isMarketClosed = document.getElementById('market-status').textContent.includes('Closed');
+            const isOneDayView = document.querySelector('.time-button.active').dataset.range === '1D';
+            const showingHistoricalData = isMarketClosed && isOneDayView;
+            
+            // Get the date of the data we're showing
+            let dataDate = '';
+            if (historicalData.length > 0) {
+                const firstTimestamp = new Date(historicalData[0].timestamp);
+                dataDate = firstTimestamp.toLocaleDateString();
             }
 
             const timestamps = historicalData.map(data => {
@@ -214,6 +260,20 @@
                                     return `$${context.parsed.y.toFixed(2)}`;
                                 }
                             }
+                        },
+                        title: {
+                            display: showingHistoricalData,
+                            text: showingHistoricalData ? `Previous Trading Day: ${dataDate}` : '',
+                            color: textColor,
+                            font: {
+                                family: 'Segoe UI',
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 10
+                            }
                         }
                     },
                     scales: {
@@ -225,9 +285,9 @@
                             ticks: {
                                 color: textColor,
                                 callback: function(value, index, ticks) {
-                                    if (index === 0) {
-                                        return 'Hover to view timestamps';
-                                    } 
+                                    if (index === 0 || index === Math.floor(ticks.length / 2) || index === ticks.length - 1) {
+                                        return timestamps[index];
+                                    }
                                     return '';
                                 },
                                 autoSkip: false,
@@ -272,6 +332,10 @@
             }
 
             socket = new WebSocket('wss://stocktracker-z7er.onrender.com/ws')
+            
+            //const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            //const wsUrl = `${protocol}//${window.location.host}/ws`;
+            //socket = new WebSocket(wsUrl);
 
             socket.onopen = () => {
                 socket.send(JSON.stringify({
@@ -299,17 +363,84 @@
                             </div>
                         </div>
                         <div class="stock-details">
-                            <div class="detail-item">
-                                <div class="detail-label">Sector</div>
-                                <div class="detail-value">${data.sector}</div>
+                            <div class="details-section">
+                                <h3>Company Information</h3>
+                                <div class="detail-item">
+                                    <div class="detail-label">Sector</div>
+                                    <div class="detail-value">${data.sector}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Industry</div>
+                                    <div class="detail-value">${data.industry}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Country</div>
+                                    <div class="detail-value">${data.country}</div>
+                                </div>
                             </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Industry</div>
-                                <div class="detail-value">${data.industry}</div>
+                            
+                            <div class="details-section">
+                                <h3>Key Metrics</h3>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-label">Market Cap</div>
+                                        <div class="detail-value">${formatLargeNumber(data.marketCap)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">P/E Ratio</div>
+                                        <div class="detail-value">${formatNumber(data.pe_ratio)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">EPS</div>
+                                        <div class="detail-value">${formatNumber(data.eps)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Beta</div>
+                                        <div class="detail-value">${formatNumber(data.beta)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Dividend Yield</div>
+                                        <div class="detail-value">${data.dividend_yield !== "N/A" ? (data.dividend_yield * 100).toFixed(2) + '%' : "N/A"}</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Country</div>
-                                <div class="detail-value">${data.country}</div>
+                            
+                            <div class="details-section">
+                                <h3>Trading Information</h3>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-label">Previous Close</div>
+                                        <div class="detail-value">${formatNumber(data.previousClose)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Open</div>
+                                        <div class="detail-value">${formatNumber(data.open)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Day High</div>
+                                        <div class="detail-value">${formatNumber(data.dayHigh)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Day Low</div>
+                                        <div class="detail-value">${formatNumber(data.dayLow)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">52-Week High</div>
+                                        <div class="detail-value">${formatNumber(data.fiftyTwoWeekHigh)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">52-Week Low</div>
+                                        <div class="detail-value">${formatNumber(data.fiftyTwoWeekLow)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Volume</div>
+                                        <div class="detail-value">${formatLargeNumber(data.volume)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Avg Volume</div>
+                                        <div class="detail-value">${formatLargeNumber(data.averageVolume)}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
