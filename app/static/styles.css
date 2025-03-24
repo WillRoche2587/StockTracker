@@ -96,10 +96,88 @@ input {
     border-color:var(--border-color);
 }
 /* Layout */
-.container {
+.layout {
+    display: grid;
+    grid-template-columns: 200px 1fr 300px;
+    gap: 2rem;
     max-width: 100%;
+    padding: 20px;
+    align-items: start;
+}
+/* Main content area */
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+/* Stock info container - now only contains the main card */
+.stock-info-container {
+    width: 100%;
+}
+/* Right sidebar for info cards */
+.info-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 20px;
+}
+/* Individual info cards */
+.info-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+}
+/* Stock card adjustments */
+.stock-card {
+    width: 100%;
     margin: 0;
-    padding: 0 20px;
+    max-width: none;
+}
+/* Chart container adjustments */
+.chart-container {
+    height: 400px;
+    width: 100%;
+    margin-top: 1rem;
+}
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+    .layout {
+        grid-template-columns: 200px 1fr 250px;
+    }
+}
+@media (max-width: 1200px) {
+    .layout {
+        grid-template-columns: 200px 1fr 220px;
+    }
+}
+@media (max-width: 1024px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        position: static;
+    }
+}
+@media (max-width: 768px) {
+    .layout {
+        padding: 10px;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .info-cards-container {
+        grid-template-columns: 1fr;
+    }
 }
 /* Typography */
 h1 {
@@ -261,44 +339,11 @@ input {
     border-radius:8px;
     margin-top:1rem;
 }
-.chart-container {
-    height:300px;
-    background:white;
-    padding:0rem;
-    border-radius:12px;
-    box-shadow:var(--shadow-md);
-    margin-top:0rem;
-}
-.layout {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 2rem;
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 20px;
-    align-items: start;
-}
-.content {
-    width:100%;
-}
-.content h1 {
-    text-align:center;
-    margin-bottom:2rem;
-}
 .chart-wrapper {
     display:flex;
     flex-direction:column;
     gap:1rem;
     margin-top:2rem;
-}
-.chart-container {
-    background:white;
-    padding:2rem;
-    border-radius:16px;
-    box-shadow:var(--shadow-md);
-    height:500px;
-    /* Increased height for fuller screen */
-    width:100%;
 }
 .time-range-selector {
     display:flex;
