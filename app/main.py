@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -9,11 +10,19 @@ from typing import Dict, List
 
 app = FastAPI()
 
+# Mount static files directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Type-annotated storage for recent searches
 recent_searches: Dict[str, dict] = {}
 
 def is_market_open() -> bool:
+    """
+    Check if the US stock market is currently open.
+    
+    Returns:
+        bool: True if market is open, False otherwise
+    """
     now = datetime.now()
     if now.weekday() >= 5:  # Weekend check
         return False
@@ -22,6 +31,15 @@ def is_market_open() -> bool:
     return 9.5 <= et_hour < 16  # Market hours: 9:30 AM - 4:00 PM ET
 
 def calculate_timeframe_change(historical_prices: List[dict]) -> float:
+    """
+    Calculate percentage change based on historical data.
+    
+    Args:
+        historical_prices (List[dict]): List of historical price data points
+        
+    Returns:
+        float: Percentage change rounded to 2 decimal places
+    """
     if not historical_prices or len(historical_prices) < 2:
         return 0.0
     
@@ -34,6 +52,16 @@ def calculate_timeframe_change(historical_prices: List[dict]) -> float:
     return round(((end_price - start_price) / start_price) * 100, 2)
 
 def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
+    """
+    Get historical stock data based on timeframe.
+    
+    Args:
+        stock (yf.Ticker): Yahoo Finance Ticker object
+        timeframe (str): Time period for historical data ("1D", "1W", "1M", "1Y")
+        
+    Returns:
+        List[dict]: List of historical price data points
+    """
     end_date = datetime.now()
     
     timeframe_settings = {
@@ -46,14 +74,18 @@ def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
     delta, interval = timeframe_settings.get(timeframe, timeframe_settings["1D"])
     start_date = end_date - delta
     
+    # Adjust for market closed scenario in 1D view
     if timeframe == "1D" and not is_market_open():
+        # If market is closed, get most recent trading day's data
         now = datetime.now()
+        # If it's weekend or outside trading hours
         if now.weekday() >= 5:  # Weekend
             days_to_subtract = now.weekday() - 4  # Go back to Friday
             end_date = (now - timedelta(days=days_to_subtract)).replace(hour=16, minute=0, second=0)
             start_date = end_date - timedelta(days=1)
         else:  # Weekday but market closed
             if now.hour < 9 or (now.hour == 9 and now.minute < 30):
+                # Before market opens, show previous day
                 if now.weekday() == 0:  # Monday
                     start_date = (now - timedelta(days=3)).replace(hour=9, minute=30, second=0)  # Friday
                     end_date = (now - timedelta(days=3)).replace(hour=16, minute=0, second=0)
@@ -63,6 +95,7 @@ def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
             else:  # After market closes
                 start_date = now.replace(hour=9, minute=30, second=0)
                 end_date = now.replace(hour=16, minute=0, second=0)
+    
     hist_data = stock.history(start=start_date, end=end_date, interval=interval)
     
     return [
@@ -75,11 +108,18 @@ def get_historical_data(stock: yf.Ticker, timeframe: str) -> List[dict]:
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
+    """Serve the index.html file."""
     with open("static/index.html") as f:
         return HTMLResponse(content=f.read())
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time stock data updates.
+    
+    Args:
+        websocket (WebSocket): FastAPI WebSocket connection
+    """
     await websocket.accept()
     
     try:
@@ -121,6 +161,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 "historicalData": historical_prices,
                 "marketOpen": is_market_open(),
                 "recentSearches": list(recent_searches.values())[-7:],
+                # Additional stock info
                 "marketCap": stock_info.get("marketCap", "N/A"),
                 "volume": stock_info.get("volume", "N/A"),
                 "averageVolume": stock_info.get("averageVolume", "N/A"),
@@ -137,7 +178,7 @@ async def websocket_endpoint(websocket: WebSocket):
             }
             
             await websocket.send_json(response_data)
-            await asyncio.sleep(2)
+            await asyncio.sleep(2)  # Rate limiting
             
     except WebSocketDisconnect:
         print("Client disconnected")
